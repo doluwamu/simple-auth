@@ -1,4 +1,5 @@
 import express from "express";
+import { isAuthenticated } from "./authMiddleware.js";
 import {
   deleteUser,
   editUserProfile,
@@ -11,7 +12,10 @@ const router = express.Router();
 
 router.route("").get(getAllUsers).post(register);
 
-router.route("/:id").put(editUserProfile).delete(deleteUser);
+router
+  .route("/:id")
+  .put(isAuthenticated, editUserProfile)
+  .delete(isAuthenticated, deleteUser);
 
 router.post("/login", login);
 

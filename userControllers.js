@@ -6,7 +6,6 @@ import { generateAccessToken, generateRefreshToken } from "./generateToken.js";
 export const getAllUsers = async (req, res) => {
   try {
     const users = await new userQuery().allUsers();
-
     return res.json(users[0]);
   } catch (error) {
     return res.status(500).send({ message: error.message });
@@ -100,10 +99,8 @@ export const editUserProfile = async (req, res) => {
     if (!user || existingUser[0].length < 1)
       return res.status(400).send({ message: "User does not exist!" });
 
-    if (user.id !== parseInt(id))
-      return res
-        .status(400)
-        .send({ message: "Entered email and id do not match!" });
+    if (user.id !== parseInt(req.user.id))
+      return res.status(400).send({ message: "This is not your account!" });
 
     const nameToEdit = name ? name : user.name;
     const emailToEdit = email ? email : user.email;
@@ -137,10 +134,8 @@ export const deleteUser = async (req, res) => {
     if (!user || existingUser[0].length < 1)
       return res.status(400).send({ message: "User does not exist!" });
 
-    if (user.id !== parseInt(id))
-      return res
-        .status(400)
-        .send({ message: "Entered email and id do not match!" });
+    if (user.id !== parseInt(req.user.id))
+      return res.status(400).send({ message: "This is not your account!" });
 
     const removeUser = await new userQuery().removeUser(id);
 
